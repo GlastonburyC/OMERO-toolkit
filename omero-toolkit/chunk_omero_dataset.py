@@ -41,10 +41,20 @@ if not all([username, password, host, port, dataset_ids, chunk_size]):
     exit(1)
 
 # Parse dataset IDs (handle single value or list)
-if isinstance(dataset_ids, str):
-    dataset_ids = [int(id_.strip()) for id_ in dataset_ids.split(",")]
-elif isinstance(dataset_ids, list):
-    dataset_ids = [int(id_) for id_ in dataset_ids]
+if isinstance(dataset_ids, int):
+    dataset_ids = [dataset_ids]
+elif isinstance(dataset_ids, str):
+    try:
+        dataset_ids = [int(id_.strip()) for id_ in dataset_ids.split(",")]
+    except ValueError:
+        logging.error("Invalid dataset_id string. Ensure integers separated by commas")
+        exit(1)
+elif isinstance(dataset_ids, list): 
+    try:
+        dataset_ids = [int(id_) for id_ in dataset_ids]
+    except ValueError:
+        logging.error("Invalid dataset_id list. Ensure all entries are integers.")
+        exit(1)
 else:
     logging.error("Invalid format for `dataset_id`. Provide a single ID or a list of IDs.")
     exit(1)
